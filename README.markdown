@@ -1,10 +1,12 @@
-# Program cleans the .vcf android contacts file.
+# Contacter
 
-# Deletes all the contacts without any phone number. Deletes all the fields of a contact except the name and telephone field.
+Program cleans the .vcf android contacts file.
 
-# Useful if your contact list is cluttered with contacts synced from facebook and gmail accounts.
+Deletes all the contacts without any phone number. Deletes all the fields of a contact except the name and telephone field.
 
-# Simply select 'Import from SD card' in your phone after transferring the generated outputContacts.vcf file to your phone SD card.
+Useful if your contact list is cluttered with contacts synced from facebook and gmail accounts.
+
+Simply select 'Import from SD card' in your phone after transferring the generated outputContacts.vcf file to your phone SD card.
 
 To execute:
-    $ python contactManager.py <contacts_file.vcf>
+    `$ python contactManager.py <contacts_file.vcf>`
