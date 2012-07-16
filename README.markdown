@@ -7,4 +7,4 @@
 # Simply select 'Import from SD card' in your phone after transferring the generated outputContacts.vcf file to your phone SD card.
 
 To execute:
-``` $ python contactManager.py <contacts_file.vcf>```
+    $ python contactManager.py <contacts_file.vcf>
