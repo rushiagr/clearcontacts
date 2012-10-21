@@ -3,12 +3,12 @@
 
 usage: `contactsManager.py [-h] [-p] [-b] [-e] [-a] [-u] CONTACT`
 
-Cleans up an Android contacts file and saves the new file with prefix 'out_'.
-If no optional arguments are provided, it removes duplicate contacts and keeps
-only the contact name and all the telephone numbers associated with that
-contact. Also, it removes a contact which does not contain any phone number.
-If you want to keep any other field other than the name and phone number, use
-optional arguments.
+    Cleans up an Android contacts file and saves the new file with prefix 'out_'.
+    If no optional arguments are provided, it removes duplicate contacts and keeps
+    only the contact name and all the telephone numbers associated with that
+    contact. Also, it removes a contact which does not contain any phone number.
+    If you want to keep any other field other than the name and phone number, use
+    optional arguments.
 
 positional arguments:
   CONTACT         The android .vcf contacts file
