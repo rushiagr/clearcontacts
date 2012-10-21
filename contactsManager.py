@@ -3,7 +3,8 @@ import sys
 
 parser = argparse.ArgumentParser(description=
             """
-            Cleans up an Android contacts file. If no optional arguments are
+            Cleans up an Android contacts file and saves the new file with
+            prefix 'out_'. If no optional arguments are
             provided, it removes duplicate contacts and keeps only the contact
             name and all the telephone numbers associated with that contact.
             Also, it removes a contact which does not contain any phone number.
