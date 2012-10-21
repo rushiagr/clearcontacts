@@ -1,62 +1,98 @@
-#! /usr/bin/env python
-
-# Program cleans the .vcf android contacts file.
-
-# Deletes all the contacts without any phone number. Deletes all the fields of a contact except the name and telephone field.
-
-# Useful if your contact list is cluttered with contacts synced from facebook and gmail accounts.
-
-# Simply select 'Import from SD card' in your phone after transferring the generated outputContacts.vcf file to your phone SD card.
-
+import argparse
 import sys
 
-if len(sys.argv) <= 1 or len(sys.argv) > 2:
-    print "Usage: contactsManager.py <contact_file_name>"
-    sys.exit()
+parser = argparse.ArgumentParser(description=
+            """
+            Cleans up an Android contacts file. If no optional arguments are
+            provided, it removes duplicate contacts and keeps only the contact
+            name and all the telephone numbers associated with that contact.
+            Also, it removes a contact which does not contain any phone number.
+            
+            If you want to keep any other field other than the name and
+            phone number, use optional arguments.
+            """)
 
-# holding a contact
-class contact:
-    value = ''
-    pass
+parser.add_argument('CONTACT', help='The android .vcf contacts file')
 
-# address book
-book = []
+parser.add_argument('-p', '--photo',
+                    help='keep photograph',
+                    default=False, action='store_true')
+parser.add_argument('-b', '--birthday',
+                    help='keep birthday',
+                    default=False, action='store_true')
+parser.add_argument('-e', '--email',
+                    help='keep email',
+                    default=False, action='store_true')
+parser.add_argument('-a', '--address',
+                    help='keep address',
+                    default=False, action='store_true')
+parser.add_argument('-u', '--url',
+                    help='keep URL',
+                    default=False, action='store_true')
+
+args = parser.parse_args()
+
+# Set to check for duplicates
+contact_set = set()
+
+# Dictionary with name as key and the whole contact string as value
+contact_dict = dict()
 
     
-f = open(sys.argv[1])
+readfile = open(args.CONTACT)
+writefile = open('out_'+args.CONTACT, 'w')
+line = readfile.readline()
 
-line = f.readline()
-w = open("outputContacts.vcf", 'w')
-
-c = contact()
+contact = ''
+contact_name = ''
 
 while line != '':
-    if line.startswith("BEGIN:VCARD"):
-        c.value += line
-        line = f.readline()
-    if line.startswith("VERSION") or line.startswith("TEL") or line.startswith("N") or line.startswith("FN"):
-        c.value += line
-        line = f.readline()
-    if line.startswith("EMAIL") or line.startswith("URL") or line.startswith("ADR") or line.startswith('BDAY'):
-        line = f.readline()
-    if line.startswith("END:VCARD"):
-        c.value += line
-        line = f.readline()
-        book.append(c)
-        del c
-        c = contact()
-    if line.startswith("PHOTO"):
-        while not line.startswith("END:VCARD"):
-            line = f.readline()
-        c.value += line
-        line = f.readline()
-        if c.value.find("TEL") >= 0:
-            book.append(c)
-        del c
-        c = contact()
 
-for i in book:
-    if i.value.find("TEL") >= 0:
-            w.write(i.value)
+    # These lines anyways must exist
+    if line.startswith("BEGIN:VCARD") or \
+                line.startswith("VERSION") or \
+                line.startswith("N") or \
+                line.startswith("TEL"):
+        contact += line
+
+    if line.startswith("FN"):
+        contact += line
+        contact_name = line.partition(':')[2].lower()
+
+    if line.startswith("PHOTO"):
+        if args.photo:
+            contact += line
+        line = readfile.readline()
+        while line.startswith(' ') or len(line) is 0:
+            if args.photo:
+                contact += line
+            line = readfile.readline()
+
+    if line.startswith("BDAY"):
+        if args.birthday:
+            contact += line
+    if line.startswith("EMAIL"):
+        if args.email:
+            contact += line
+    if line.startswith("ADR"):
+        if args.address:
+            contact += line
+    if line.startswith("URL"):
+        if args.url:
+            contact += line
+
+
+    if line.startswith("END:VCARD"):
+        contact += line
+        
+        if contact.find("TEL") >= 0:
+            if contact not in contact_set:
+                contact_set.add(contact)
+                contact_dict[contact_name] = contact
+        contact = ''
+        contact_name = ''
     
-print "Cleaned contacts saved in 'outputContacts.vcf' file.\n"
+    line = readfile.readline()
+
+for contact in sorted(contact_dict.iterkeys()):
+    writefile.write(contact_dict[contact])
